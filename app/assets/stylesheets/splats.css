@@ -144,7 +144,7 @@
     }
 
     .windshield .splat:hover & + & {
-      transform: translate(1rem, -1rem);
+      transform: translate(0, -1rem);
     }
 
     .windshield .splat:hover & + & + & {
