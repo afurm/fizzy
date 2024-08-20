@@ -1,15 +1,12 @@
 class User < ApplicationRecord
   belongs_to :account
-  has_many :sessions, dependent: :destroy
-  has_many :splats, dependent: :destroy
 
+  has_many :sessions, dependent: :destroy
   has_secure_password validations: false
 
-  scope :active, -> { where(active: true) }
+  has_many :splats, dependent: :destroy
 
-  def current?
-    self == Current.user
-  end
+  normalizes :email_address, with: ->(value) { value.strip.downcase }
 
   def initials
     name.scan(/\b\w/).join
@@ -24,6 +21,6 @@ class User < ApplicationRecord
 
   private
     def deactived_email_address
-      email_address&.gsub(/@/, "-deactivated-#{SecureRandom.uuid}@")
+      email_address.sub(/@/, "-deactivated-#{SecureRandom.uuid}@")
     end
 end

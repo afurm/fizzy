@@ -1,7 +1,5 @@
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
-    include Authentication::SessionLookup
-
     identified_by :current_user
 
     def connect
@@ -10,10 +8,16 @@ module ApplicationCable
 
     private
       def find_verified_user
-        if verified_session = find_session_by_cookie
-          verified_session.user
+        if session = find_session_by_cookie
+          session.user
         else
           reject_unauthorized_connection
+        end
+      end
+
+      def find_session_by_cookie
+        if token = cookies.signed[:session_token]
+          Session.find_signed(token)
         end
       end
   end

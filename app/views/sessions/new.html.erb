@@ -1,5 +1,4 @@
 <% content_for(:title) { "Sign in" } %>
-<% turbo_page_requires_reload %>
 
 <div class="panel shadow center margin-block-double <%= "shake" if flash[:alert] %>" style="--panel-size: 40ch;">
   <%#= image_tag "blob.svg", class: "product__logo center colorize--black", size: 130 %>
@@ -12,7 +11,7 @@
 
   <h1 class="margin-none-block-start margin-block-end-double">Fizzy</h1>
 
-  <%= form_with model: User.new, url: session_path, class: "flex flex-column gap" do |form| %>
+  <%= form_with url: session_path, class: "flex flex-column gap" do |form| %>
     <div class="flex align-center gap">
       <%= translation_button(:email_address) %>
       <label class="flex align-center gap input input--actor txt-large">

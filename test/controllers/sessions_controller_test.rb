@@ -9,36 +9,30 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "new denied with incompatible browser" do
+  test "new enforces browser compatibility" do
     get new_session_url, env: { "HTTP_USER_AGENT" => DISALLOWED_BROWSER }
     assert_select "svg", message: /Your browser is not supported/
-  end
 
-  test "new allowed with compatible browser" do
     get new_session_url, env: { "HTTP_USER_AGENT" => ALLOWED_BROWSER }
     assert_select "svg", text: /Your browser is not supported/, count: 0
   end
 
   test "create with valid credentials" do
-    post session_url, params: { user: { email_address: "david@37signals.com", password: "secret123456" } }
-
+    post session_url, params: { email_address: "david@37signals.com", password: "secret123456" }
     assert_redirected_to root_url
-    assert parsed_cookies.signed[:session_token]
+    assert cookies[:session_token].present?
   end
 
   test "create with invalid credentials" do
-    post session_url, params: { user: { email_address: "david@37signals.com", password: "wrong" } }
-
-    assert_response :unauthorized
-    assert_nil parsed_cookies.signed[:session_token]
+    post session_url, params: { email_address: "david@37signals.com", password: "wrong" }
+    assert_redirected_to new_session_url
+    assert_not cookies[:session_token].present?
   end
 
   test "destroy" do
     sign_in :kevin
-
     delete session_url
-
-    assert_redirected_to root_url
+    assert_redirected_to new_session_url
     assert_not cookies[:session_token].present?
   end
 end
