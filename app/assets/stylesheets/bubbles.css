@@ -366,7 +366,7 @@
 }
 
 .bubble__svg {
-  fill: var(--color-bg);
+  fill: color(from var(--bubble-color) srgb r g b / 0.15);
   pointer-events: none;
   position: relative;
   scale: 1.1;
