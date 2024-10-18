@@ -1,10 +1,11 @@
 class Bucket::BubbleFilter
-  attr_reader :tags, :assignees
-
   def initialize(bucket, params = {})
-    @bucket, @status, @order_by, @term = bucket, params["status"], params["order_by"], params["term"]
-    @tags = find_tags(params["tag_ids"]) if params["tag_ids"]
-    @assignees = find_assignees(params["assignee_ids"]) if params["assignee_ids"]
+    @bucket = bucket
+    @status = params["status"]
+    @order_by = params["order_by"]
+    @term = params["term"]
+    @tag_ids = params["tag_ids"]
+    @assignee_ids = params["assignee_ids"]
   end
 
   def bubbles
@@ -19,15 +20,15 @@ class Bucket::BubbleFilter
     end
   end
 
+  def tags
+    @tags ||= account.tags.where(id: tag_ids) if tag_ids
+  end
+
+  def assignees
+    @assignees ||= account.users.where(id: assignee_ids) if assignee_ids
+  end
+
   private
-    attr_reader :bucket, :status, :order_by, :term
+    attr_reader :bucket, :status, :order_by, :term, :tag_ids, :assignee_ids
     delegate :account, to: :bucket, private: true
-
-    def find_tags(tag_ids)
-      account.tags.where id: tag_ids
-    end
-
-    def find_assignees(assignee_ids)
-      account.users.where id: assignee_ids
-    end
 end
