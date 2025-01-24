@@ -32,7 +32,7 @@
     <%= form_with model: @bubble, url: bucket_bubble_path(@bubble.bucket, @bubble), data: { controller: "form" } do |form| %>
       <label class="btn full-width justify-start borderless">
         <%= image_tag "calendar-add.svg", aria: { hidden: true }, size: 24 %>
-        <span><%= @bubble.due_on.present? ? "Change" : "Add a" %> date</span>
+        <span>Date</span>
         <%= form.date_field :due_on, class: "input input--hidden", data: { action: "change->form#submit click->form#showPicker" } %>
       </label>
     <% end %>
@@ -49,7 +49,7 @@
       <%= form_with model: @bubble, url: bucket_bubble_path(@bubble.bucket, @bubble), data: { controller: "form" } do |form| %>
         <label class="btn full-width justify-start borderless">
           <%= image_tag "picture-add.svg", aria: { hidden: true }, size: 24 %>
-          <span>Add an image</span>
+          <span>Background</span>
           <%= form.file_field :image, class: "input",
                 accept: "image/png, image/jpeg, image/jpg, image/webp",
                 data: { action: "upload-preview#previewImage form#submit", upload_preview_target: "input" },
@@ -60,7 +60,7 @@
 
     <%= button_to bucket_bubble_boosts_path(@bubble.bucket, @bubble), class: "btn full-width justify-start borderless", data: { turbo_frame: dom_id(@bubble, :boosts) } do %>
       <%= image_tag "thumb-up.svg", aria: { hidden: true }, size: 24 %>
-      <span>Boost this</span>
+      <span>Boost</span>
     <% end %>
 
     <hr class="separator--horizontal full-width" style="--border-color: var(--color-subtle);" />
@@ -78,7 +78,7 @@
           class: "btn full-width justify-start borderless",
           data: { turbo_confirm: "Are you sure you want to delete this bubble?" } do %>
       <%= image_tag "trash.svg", aria: { hidden: true }, size: 24 %>
-      <span>Delete bubble</span>
+      <span>Delete</span>
     <% end %>
   </div>
 </aside>
