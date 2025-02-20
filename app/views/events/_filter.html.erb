@@ -1,0 +1,29 @@
+<% presenter = BucketFilterPresenter.new(@buckets, params, cookies) %>
+<div class="position-relative margin-block-start-half margin-block-end center max-width" 
+		data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+	<button class="input input--select flex-inline min-width max-width" data-action="click->dialog#open:stop">
+		<span class="overflow-ellipsis">
+			<%= presenter.filter_text %>
+		</span>
+	</button>
+
+	<dialog class="events__popup popup panel flex-column full-width align-start gap-half fill-white shadow" data-dialog-target="dialog" data-action="turbo:before-cache@document->dialog#close">
+		<strong class="popup__title margin-block-start-half pad-inline-half">Filter by projects…</strong>
+		<%= form_with url: events_path, method: :get, class: "flex flex-column full-width popup__list", 
+					data: { controller: "form" } do |form| %>
+			<%= link_to "Show everything", events_path(clear_filter: true), class: "btn popup__item" %>
+			<% @buckets.each do |bucket| %>
+				<div class="btn popup__item">
+					<%= form.check_box "bucket_ids[]", { 
+						checked: (params[:bucket_ids] || cookies[:bucket_filter]&.split(","))&.include?(bucket.id.to_s),
+						data: { action: "change->form#submit" },
+						include_hidden: false,
+					}, bucket.id %>
+
+					<%= form.label "bucket_ids[]", bucket.name, for: dom_id(bucket, :filter), class: "overflow-ellipsis" %>
+					<%= image_tag "check.svg", aria: { hidden: true }, size: 18, class: "checked flex-item-justify-end" %>
+				</div>
+			<% end %>
+		<% end %>
+	</dialog>
+</div>

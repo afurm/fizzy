@@ -2,12 +2,13 @@
 
 <% content_for :header do %>
   <nav class="align-start">
-    <header class="flex flex-column center">
+    <header class="flex-inline flex-column center max-width">
       <div class="flex align-center gap-half justify-center">
         <%= link_to "Collections", root_path %>
         <%= link_to "Activity", events_path %>
       </div>
       <h1 class="txt-x-large"><%= @page_title %></h1>
+      <%= render "events/filter" %>
     </header>
   </nav>
 <% end %>

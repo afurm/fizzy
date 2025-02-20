@@ -25,6 +25,19 @@
   }
 }
 
+.events__popup {
+  .panel:is(&) {
+    max-block-size: calc(100dvh - (2 * var(--block-space-double)));
+    max-inline-size: calc(100dvw - (2 * var(--block-space-double)));
+  }
+
+  #header:has(&) {
+    max-inline-size: 100%;
+    position: relative;
+    z-index: 5;
+  }
+}
+
 .event {
   --column-gap: 0.7ch;
   --panel-border-radius: 0.5em;

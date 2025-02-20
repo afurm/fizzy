@@ -25,4 +25,16 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
       assert_select "strong", text: "David assigned JZ to Layout is broken"
     end
   end
+
+  test "only displays events from filtered buckets" do
+    get events_path(bucket_ids: [ buckets(:writebook).id ])
+    assert_response :success
+
+    events_shown = css_select(".event").count
+    assert events_shown > 0, "Should show some events"
+
+    css_select(".event").each do |event|
+      assert_includes event.text, buckets(:writebook).name
+    end
+  end
 end

@@ -8,4 +8,6 @@ class Bucket < ApplicationRecord
   has_many :tags, -> { distinct }, through: :bubbles
 
   validates_presence_of :name
+
+  scope :alphabetically, -> { order(name: :asc) }
 end

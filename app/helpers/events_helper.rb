@@ -50,6 +50,7 @@ module EventsHelper
     accessible_events = Event.joins(bubble: :bucket)
       .merge(Current.user.buckets)
       .where(created_at: start_time..end_time)
+      .where(bubbles: { bucket_id: params[:bucket_ids].presence || Current.user.bucket_ids })
 
     headers = {
       "Touched" => nil,
