@@ -9,4 +9,8 @@ module WorkflowsHelper
       end
     end
   end
+
+  def stage_color(stage)
+    stage.color.presence || "#2c6da8"
+  end
 end

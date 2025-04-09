@@ -1,4 +1,6 @@
-<div class="flex gap-half align-center justify-space-between">
+<div class="flex gap-half align-center">
+  <%= render "workflows/stages/color", stage: stage %>
+
   <%= turbo_frame_tag stage do %>
     <%= link_to edit_workflow_stage_path(stage.workflow, stage) do %>
       <strong class="txt-nowrap overflow-ellipsis"><%= stage.name %></strong>
