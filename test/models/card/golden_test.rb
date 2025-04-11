@@ -21,10 +21,7 @@ class Card::GoldenTest < ActiveSupport::TestCase
   end
 
   test "scopes" do
-    assert_includes Card.doing, cards(:logo)
-    assert_not_includes Card.doing, cards(:text)
-
-    assert_includes Card.considering, cards(:text)
-    assert_not_includes Card.considering, cards(:logo)
+    assert_includes Card.golden, cards(:logo)
+    assert_not_includes Card.golden, cards(:text)
   end
 end
