@@ -71,7 +71,7 @@ module EventsHelper
         "#{ event.creator == Current.user ? "You" : event.creator.name } assigned #{ event.assignees.pluck(:name).to_sentence } to <span style='color: var(--card-color)'>#{ card_title(event.card) }</span>".html_safe
       end
     when "unassigned"
-      "#{ event.creator == Current.user ? "You" : event.creator.name } unassigned #{ event.assignees.pluck(:name).to_sentence } from <span style='color: var(--card-color)'>#{ card_title(event.card) }</span>".html_safe
+      "#{ event.creator == Current.user ? "You" : event.creator.name } unassigned #{ event.assignees.include?(Current.user) ? "yourself" : event.assignees.pluck(:name).to_sentence } from <span style='color: var(--card-color)'>#{ card_title(event.card) }</span>".html_safe
     when "boosted"
       "#{ event.creator == Current.user ? "You" : event.creator.name } boosted <span style='color: var(--card-color)'>#{ card_title(event.card) }</span>".html_safe
     when "commented"
@@ -81,9 +81,9 @@ module EventsHelper
     when "closed"
       "#{ event.creator == Current.user ? "You" : event.creator.name } closed <span style='color: var(--card-color)'>#{ card_title(event.card) }</span>".html_safe
     when "staged"
-      "#{event.creator == Current.user ? "You" : event.creator.name} changed the stage to #{event.stage_name} on <span style='color: var(--card-color)'>#{ card_title(event.card) }</span>".html_safe
+      "#{event.creator == Current.user ? "You" : event.creator.name} moved <span style='color: var(--card-color)'>#{ card_title(event.card) }</span> to the #{event.stage_name} stage".html_safe
     when "unstaged"
-      "#{event.creator == Current.user ? "You" : event.creator.name} removed <span style='color: var(--card-color)'>#{ card_title(event.card) }</span> from the #{event.stage_name} stage".html_safe
+      "#{event.creator == Current.user ? "You" : event.creator.name} moved <span style='color: var(--card-color)'>#{ card_title(event.card) }</span> out ofthe #{event.stage_name} stage".html_safe
     when "due_date_added"
       "#{event.creator == Current.user ? "You" : event.creator.name} set the date to #{event.particulars.dig('particulars', 'due_date').to_date.strftime('%B %-d')} on <span style='color: var(--card-color)'>#{ card_title(event.card) }</span>".html_safe
     when "due_date_changed"
@@ -91,7 +91,7 @@ module EventsHelper
     when "due_date_removed"
       "#{event.creator == Current.user ? "You" : event.creator.name} removed the date on <span style='color: var(--card-color)'>#{ card_title(event.card) }</span>"
     when "title_changed"
-      "#{event.creator == Current.user ? "You" : event.creator.name} renamed  on <span style='color: var(--card-color)'>#{ card_title(event.card) }</span> (was: '#{event.particulars.dig('particulars', 'old_title')})'".html_safe
+      "#{event.creator == Current.user ? "You" : event.creator.name} renamed <span style='color: var(--card-color)'>#{ card_title(event.card) }</span> (was: '#{event.particulars.dig('particulars', 'old_title')})'".html_safe
     end
   end
 

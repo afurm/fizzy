@@ -2,7 +2,7 @@
 <% link = event.action == "commented" ? collection_card_path(card.collection, card, anchor: dom_id(event.comment)) : collection_card_path(card.collection, card) %>
 
 <%= link_to link,
-      class: "event panel center center-block flex-inline align-start justify-start gap position-relative full-width",
+      class: "event event--#{ event.action } panel center center-block flex-inline align-start justify-start gap position-relative",
       style: "--card-color: #{ card.color }; background-color: color-mix(in srgb, var(--card-color) 10%, var(--color-bg));
   color: color-mix(in srgb, var(--card-color) 40%, var(--color-ink));",
       data: { related_element_target: "related",

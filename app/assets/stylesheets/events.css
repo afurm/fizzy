@@ -118,6 +118,8 @@
   }
 
   .event__title {
+    --lines: 4;
+  
     font-size: 1.1em;
     line-height: 1.2;
   }
