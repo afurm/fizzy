@@ -57,6 +57,14 @@ class Card::Eventable::SystemCommenterTest < ActiveSupport::TestCase
     end
   end
 
+  test "don't notify on system comments" do
+    @card.watch_by(users(:david))
+
+    assert_no_difference -> { Notification.count } do
+      @card.toggle_assignment users(:kevin)
+    end
+  end
+
   private
     def assert_system_comment(expected_comment)
       assert_difference -> { @card.comments.count }, 1 do
