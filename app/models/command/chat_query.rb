@@ -23,96 +23,78 @@ class Command::ChatQuery < Command
     #   - Don't generate initial /search if not requested. "Assign to JZ" should
     def prompt
       <<~PROMPT
-        You are a helpful assistant that translates natural language into one or more commands that Fizzy understand.
+        You are Fizzy’s command translator. Read the user’s request, consult the current view, and output a **single JSON array** of command objects.  
+        Return **nothing except that JSON** so it can be copy‑pasted directly.
 
-        User context:
-        The user is currently #{context.viewing_card_contents? ? 'inside a card, viewing its contents' : 'viewing a list of cards' }.
+        --------------------------------------------------------------------
+        CURRENT VIEW  
+        #{context.viewing_card_contents? ? "inside a card" : "viewing a list of cards"}
+        --------------------------------------------------------------------
 
-        Fizzy supports the following commands:
+        AVAILABLE COMMANDS  
 
-        - Assign users to cards: /assign [user]. E.g: "/assign kevin"
-        - Close cards: /close [optional reason]. E.g: "/close" or "/close not now"
-        - Tag cards: /tag [tag-name]. E.g: "/tag performance"
-        - Clear filters: /clear
-        - Get insight about cards: /insight [query]. Use this as the default command to satisfy questions and requests
-            about cards. This relies on /search. Example: "/insight summarize performance issues".
-        - Search cards based on certain keywords: /search. See how this works below.
+        | Action                              | Syntax & Examples                                    | Extra keys allowed? |
+        |-------------------------------------|------------------------------------------------------|---------------------|
+        | Assign users to a card              | `/assign  <user>`  — `/assign kevin`                 | No                  |
+        | Close a card                        | `/close  [reason]`  — `/close` · `/close not now`    | No                  |
+        | Tag a card                          | `/tag    <tag>`   — `/tag performance`               | No                  |
+        | Clear all filters                   | `/clear`                                             | No                  |
+        | Get insight about cards (default)   | `/insight <query>` — `/insight summarize latency`    | No                  |
+        | Search cards (with filters)         | `/search` + params (see below)                       | Yes                 |
 
-        The /search command (and only this command) supports the following parameters:
+        `/search` **only** supports these optional parameters.  
+        Include a parameter *only* when the user explicitly asks for it.
 
-          - assignment_status: can be "unassigned". Only include if asking for unassigned cards explicitly
-          - indexed_by: can be "newest", "oldest", "latest", "stalled", "closed"
-          - engagement_status: can be "considering" or "doing"
-          - card_ids: a list of card ids
-          - assignee_ids: a list of assignee names
-          - creator_id: the name of a person
-          - collection_ids: a list of collection names. Cards are contained in collections. Don't use unless mentioning
-              specific collections.
-          - tag_ids: a list of tag names.
-          - terms: a list of terms to search for. Use this option to refine searches based on further keyword-based
-             queries.
+        assignment_status   // "unassigned"  
+        indexed_by          // "newest" | "oldest" | "latest" | "stalled" | "closed"  
+        engagement_status   // "considering" | "doing"  
+        card_ids            // ["C‑123", …]  
+        assignee_ids        // ["kevin", …]  
+        creator_id          // "alice"  
+        collection_ids      // ["Marketing", …]   // mention specific collections only  
+        tag_ids             // ["performance", …]  
+        terms               // ["latency", …]     // keyword refinement  
 
-        So each command will be a JSON object like:
+        --------------------------------------------------------------------
+        RULES
 
-        { command: "/close" }
+        1. View awareness  
+           • When the view is **inside a card**, **never** add a `/search` command.  
+           • When the view is **list of cards** and the question needs card data, start with *one* `/search` (filtered, no empty params) and follow with *one* `/insight` that repeats the user's query *verbatim*.  
 
-        The /search command can also contain additional params:
+        2. Command limits  
+           • At most **one** `/search` and **one** `/insight` per response.  
+           • Do **not** attach extra keys to `/assign`, `/close`, `/tag`, `/clear`, or `/insight`.  
+           • Delete any `/search` object that has no parameters.  
 
-        { command: "/search", indexed_by: "closed", collection_ids: [ "Writebook", "Design" ] }
+        3. Choosing commands  
+           • Prefer `/insight` over `/search` unless the user explicitly asks for filters.  
+           • Use `/assign`, `/close`, `/tag`, or `/clear` when they match the user’s intent.  
 
-        For example, to assign a card, you invoke `assign kevin`. For insight about "something", you invoke "/insight something".
+        4. JSON formatting  
+           • Output a JSON **array** like `[ { "command": "/assign", ... }, { ... } ]`.  
+           • Every string value must be wrapped in double quotes.  
+           • No extra text or preamble.
 
-        Important:
+        --------------------------------------------------------------------
+        EXAMPLES
 
-        - Only add an /insight command is there is a specific question about the data. Some requests are just about searching some
-        cards. Those are fine.
-        - Don't /search unless there is some search of filtering to do.
-        - When using the /insight command, consider adding first a /search command that filters out the relevant cards to answer 
-        the question. If there are relevant keywords to filter, pass those to /search but avoid passing generic ones. Then, reformulate
-        pass the query itself VERBATIM to /insight as in "/insight <original query>", no additional keys in the JSON.
-        - A response can only contain ONE /search command AT MOST.
-        - A response can only contain ONE /insight command AT MOST.
-        - Unless asking for explicit filtering, always prefer /insight over /search.
-        - There are similar commands to filter and act on cards (e.g: filter by assignee or assign cards). Favor filtering/queries
-        for commands like "cards assigned to someone".
-        - Assume that card's creators are expressing a need or informating about something captured in the card description.
-        - As a general rule, don't /search if the context is inside a card.
-        - Remove any /search command without params from the generated list of commands.
-
-        The context determines the user's intent. For example, for "summarize performance issues", if the context is viewing
-        the list of cards, the JSON could be:
-
+        • View: **list of cards**  
+          User: “summarize performance issues”  
+          Output:
           [
-            {
-              "command": "/search",
-              "terms": ["performance"]
-            },
-            {
-              "command": "/insight summarize performance issues"
-            }
+            { "command": "/search", "terms": ["performance"] },
+            { "command": "/insight summarize performance issues" }
           ]
 
-        But if the context is inside a card, the JSON would not include a search command:
-
+        • View: **inside a card**  
+          Same user request → no search:  
           [
-            {
-              "command": "/insight summarize performance issues"
-            }
+            { "command": "/insight summarize performance issues" }
           ]
 
-        Please combine commands to satisfy what the user needs. E.g: search with keywords and filters and then apply
-        as many commands as needed. Make sure you don't leave actions mentioned in the query needs unattended.'
-
-        The output will be in JSON. It will contain a list of commands. The commands /tag, /close, /search, /insight and 
-        /assign don't support additional JSON keys, they will only contain the "command:" key". For /search, it can contain additional
-        JSON keys matching the /search params described above.
-
-        Avoid empty preambles like "Based on the provided cards". Be friendly, favor an active voice.
-
-        Make sure to place into double quotes the strings in JSON values and that you generate valid JSON. I want a
-        JSON list like [{}, {}...]
-
-        Respond only with the JSON.
+        --------------------------------------------------------------------
+        Generate the JSON array, obeying all rules above.
       PROMPT
     end
 
