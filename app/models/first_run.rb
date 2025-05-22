@@ -5,6 +5,9 @@ class FirstRun
     Account.create!(name: "Fizzy")
     Closure::Reason.create_defaults
     Collection.create!(name: "Cards", creator: user, all_access: true)
+
+    workflow = Workflow.create!(name: "Basic workflow")
+    Collection.first.update!(workflow: workflow)
     user
   end
 end
