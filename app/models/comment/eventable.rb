@@ -17,6 +17,6 @@ module Comment::Eventable
     end
 
     def track_creation
-      track_event("created", collection: card.collection)
+      track_event("created", collection: card.collection, creator: creator)
     end
 end

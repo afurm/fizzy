@@ -1,6 +1,8 @@
 require "test_helper"
 
 class Card::StallableTest < ActiveSupport::TestCase
+  include CardActivityTestHelper
+
   setup do
     Current.session = sessions(:david)
   end
@@ -22,15 +24,9 @@ class Card::StallableTest < ActiveSupport::TestCase
   # More fine-grained testing in Card::ActivitySpike::Detector
   test "detect activity spikes" do
     assert_not cards(:logo).stalled?
-
-    perform_enqueued_jobs only: Card::ActivitySpike::DetectionJob do
-      4.times do |index|
-        cards(:logo).comments.create(body: "Comment number #{index}")
-      end
-    end
+    multiple_people_comment_on(cards(:logo))
 
     travel_to 1.month.from_now
-
     assert cards(:logo).reload.stalled?
   end
 end
