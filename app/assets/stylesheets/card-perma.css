@@ -74,6 +74,10 @@
     }
   }
 
+  .card-perma__collection-header {
+    margin-block-end: 4ch;
+  }
+
   /* Child items
   /* ------------------------------------------------------------------------ */
 

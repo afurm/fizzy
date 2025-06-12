@@ -29,6 +29,12 @@
   </nav>
 <% end %>
 
+<header class="card-perma__collection-header">
+  <%= link_to cards_path(collection_ids: [ @card.collection ]), class: "txt-large overflow-ellipsis margin-none txt-ink", style: "view-transistion-name: card-colleciton-title" do %>
+    &larr; <strong class="font-black"><%= @card.collection.name %></strong>
+  <% end %>
+</header>
+
 <div data-controller="beacon" data-beacon-url-value="<%= card_reading_url(@card) %>">
   <%= render "cards/container", card: @card %>
 
