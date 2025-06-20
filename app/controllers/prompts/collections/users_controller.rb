@@ -3,6 +3,9 @@ class Prompts::Collections::UsersController < ApplicationController
 
   def index
     @users = @collection.users
-    render layout: false
+
+    if stale? etag: @users
+      render layout: false
+    end
   end
 end
