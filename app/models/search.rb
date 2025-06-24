@@ -7,7 +7,7 @@ class Search
 
   def initialize(user, query, max_results: 50)
     @user = user
-    @query = Query.new(query)
+    @query = Query.wrap(query)
     @max_results = max_results
   end
 

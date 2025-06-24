@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_06_24_063244) do
+ActiveRecord::Schema[8.1].define(version: 2025_06_24_080408) do
   create_table "accesses", force: :cascade do |t|
     t.integer "collection_id", null: false
     t.datetime "created_at", null: false
@@ -304,6 +304,15 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_24_063244) do
 #   Unknown type '' for column 'rowid'
 
 
+  create_table "search_queries", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "terms", limit: 2000, null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id", "terms"], name: "index_search_queries_on_user_id_and_terms"
+    t.index ["user_id"], name: "index_search_queries_on_user_id"
+  end
+
   create_table "search_results", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -331,6 +340,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_24_063244) do
     t.datetime "created_at", null: false
     t.string "title"
     t.datetime "updated_at", null: false
+    t.index ["title"], name: "index_tags_on_account_id_and_title", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -391,6 +401,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_24_063244) do
   add_foreign_key "notifications", "users", column: "creator_id"
   add_foreign_key "pins", "cards"
   add_foreign_key "pins", "users"
+  add_foreign_key "search_queries", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "taggings", "cards"
   add_foreign_key "taggings", "tags"

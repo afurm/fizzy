@@ -1,32 +1,26 @@
-class Search::Query
-  attr_reader :terms
+class Search::Query < ApplicationRecord
+  validates :terms, presence: true
+  before_validation :sanitize_query_syntax
 
   class << self
     def wrap(query)
       if query.is_a?(self)
-        self.new(query)
-      else
         query
+      else
+        self.new(terms: query)
       end
     end
   end
 
-  def initialize(terms)
-    @terms = sanitize_query_syntax(terms)
-  end
-
-  def valid?
-    @terms.present?
-  end
-
-  alias to_s terms
+  alias_attribute :to_s, :terms
 
   private
-    def sanitize_query_syntax(terms)
-      terms = terms.to_s
-      terms = remove_invalid_search_characters(terms)
-      terms = remove_unbalanced_quotes(terms)
-      terms.presence
+    def sanitize_query_syntax
+      self.terms = begin
+        terms = remove_invalid_search_characters(self.terms)
+        terms = remove_unbalanced_quotes(terms)
+        terms.presence
+      end
     end
 
     def remove_invalid_search_characters(terms)
