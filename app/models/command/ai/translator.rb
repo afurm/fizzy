@@ -234,13 +234,13 @@ class Command::Ai::Translator
           "commands": ["/assign andy", "/tag #v2"]
         }
 
-        User: assign to jz*
+        User: assign to jz
         Output:
         {
           "commands": ["/assign jz"]
         }
 
-        User: cards assigned to jz*
+        User: cards assigned to jz
         Output:
         {
           "context": { "assignee_ids": ["jz"] }
@@ -259,74 +259,74 @@ class Command::Ai::Translator
           "commands": ["/reopen"]
         }
 
-        User: tag with #design*
+        User: tag with #design
         Output:
         {
           "commands": ["/tag #design"]
         }
 
-        User: completed cards*
+        User: completed cards
         Output:
         {
           "context": { "indexed_by": "closed" }
         }
 
-        User: completed cards yesterday*
+        User: completed cards yesterday
         Output:
         {
           "context": { "indexed_by": "closed", "closure": "yesterday" }
         }
 
-        User: "cards tagged with #design"*
+        User: "cards tagged with #design"
         Output:
         {
           "context": { "tag_ids": ["design"] }
         }
 
-        User: Unassigned cards*
+        User: Unassigned cards
         Output:
         {
           "context": { "assignment_status": "unassigned" }
         }
 
-        User: Close Andy’s cards, then assign them to Kevin*
+        User: Close Andy’s cards, then assign them to Kevin
         Output:
         {
           "context": { "assignee_ids": ["andy"] },
           "commands": ["/close", "/assign kevin"]
         }
 
-        User: cards created yesterday*
+        User: cards created yesterday
         Output:
         {
           "context": { "creation": "yesterday" }
         }
 
-        User: cards completed last week*
+        User: cards completed last week
         Output:
         {
           "context": { "closure": "lastweek", "indexed_by": "closed" }
         }
 
-        User: my cards that are going to be auto closed*
+        User: my cards that are going to be auto closed
         Output:
         {
           "context": { "assignee_ids": ["<current user>"], "indexed_by": "closing_soon" }
         }
 
-        User: visit user kevin*
+        User: visit user kevin
         Output:
         {
           "commands": ["/user kevin"]
         }
 
-        User: visit /users/kevin*
+        User: visit /users/kevin
         Output:
         {
           "commands": ["/visit /users/kevin"]
         }
 
-        Fallback search example (when nothing matches):*
+        Fallback search example (when nothing matches):
         { "commands": ["/search what's blocking deploy"] }
 
         ---------------------------- END OF PROMPT ---------------------------
