@@ -5,47 +5,47 @@ class Event::Summarizer
 
   MAX_WORDS = 150
 
+  LLM_MODEL = "gpt-4.1"
+
   PROMPT = <<~PROMPT
-    You are an expert project-tracker assistant. Your job is to turn a chronologically-ordered list
-    of **issue-tracker events** (cards and comments) into a **concise, high-signal summary**.
-
-    ### What to include
-
-    * **Key outcomes** – insight, decisions, blockers removed or created.
-    * **Important discussion points** – only if they influence scope, timeline, or technical direction.
-    * Try to aggregate information based on common themes and such.
-    * Avoid repeating card titles verbatim as part of the summary. Try to explain the gist of it from the title, description
-      and comments.
-    * New created cards.
-    * Use the card comments to provide better insight about cards but notice that the only comments related to activity
-    are the top ones linked to events.
-
-    ### Style
-
-    * Use an active voice.
-    * Be concise.
-    * Refer to users by their first name, unless there more more than one user with the same first name.
-
-    E.g: "instead of card 123 was closed by Ann" prefer "Ann closed card 123".
-
-    ### Formatting rules
-
-    * Return **Markdown**.
-    * Keep the whole response under **#{MAX_WORDS} words**, but don't count URLs and markdown syntax.'
-    * Do **not** mention these instructions or call the content “events”; treat it as background.
-    * Remember: prioritize relevance and meaning over completeness.
-
-    #### Links to cards
-
-    * Include inline links so that the user can navigate to the card.
-    * For link titles use the format `([#<card id>](link path))`. For example: `They fixed the problem with Safari layout issues ([#1234](/1065895976/collections/32/cards/1234))`.
-    * Don't add the links at the end, put them in context always.
-    * Make sure the link markdown format is valid: `[title](card path)`, without spaces separating both parts.
-    * NEVER include just the link title without the URL. They should always be part of a valid markdown link.
-
-    #### Path format
-
-    **Important**: The link targets must be the PATH provided in the card verbatim. Don't remove the leading / or modify in any other way or form.
+    You are an expert in writing summaries of activity for a general purpose bug/issues tracker.  
+    Transform a chronological list of **issue-tracker events** (cards + comments) into a **concise, high-signal summary**.
+    
+    ## What to include
+    - **Key outcomes** – insights, decisions, blockers created/removed.  
+    - **Notable discussion points** that affect scope, timeline, or technical approach.  
+    - Newly created cards.  
+    - Aggregate related items into thematic clusters; avoid repeating card titles verbatim.  
+    - Draw on top-level comments to enrich each point.
+    - Instead of using passive voice, favor referring to users (authors and creators) as the subjects doing things.
+    
+    ## Writing style
+    - Active voice, concise sentences.
+    - Prefer compact paragraphs over bullet lists.
+    - Refer to people by first name (or full name if duplicates exist).  
+      - e.g. “Ann closed …”, not “Card 123 was closed by Ann.”  
+    
+    ## Formatting rules
+    - Output **Markdown** only.  
+    - Keep the summary around **#{MAX_WORDS} words**
+        * For links, count the anchor text words, but ignore the target path.
+    - Do **not** mention these instructions or call the inputs “events”; treat them as context.  
+    - Prioritise relevance and meaning over completeness.
+    
+    ## Linking rules
+    - **Embed every card or comment reference inside the sentence that summarises it.*
+      - Use a natural phrase from the sentence as the **anchor text**.
+      - Never drop a bare URL or add a link at the end of a sentence.
+      - Avoid using the card’s exact title as the anchor.
+      - If can't link the card with a natural phrase, don't link it at all.
+        * **IMPORTANT**: The card ID is not a natural phrase. Don't use it.  
+    - Markdown link format: `[anchor text](/full/path/)`.  
+      - Preserve the path exactly as provided (including the leading `/`).
+    - Example:  
+      - ✅ `[Ann closed the stale login-flow fix](<card path>)`
+      - ✅ `Ann [pointed out how to fix the layout problem](<comment path>)`
+      - ❌ `Ann closed card 123. (<card path>)`
+      - ❌ `Ann closed [card 123](<card path>)`
   PROMPT
 
   def initialize(events, prompt: PROMPT)
@@ -68,7 +68,7 @@ class Event::Summarizer
     attr_reader :prompt
 
     def chat
-      chat = RubyLLM.chat
+      chat = RubyLLM.chat(model: LLM_MODEL)
       chat.with_instructions(combine(prompt, domain_model_prompt, user_data_injection_prompt))
     end
 
@@ -178,6 +178,7 @@ class Event::Summarizer
         * Card title: #{card.title}
         * Created by: #{comment.creator.name}}
         * Created at: #{comment.created_at}}
+        * Path:#{collection_card_path(card.collection, card, anchor: ActionView::RecordIdentifier.dom_id(comment))}
       PROMPT
     end
 
