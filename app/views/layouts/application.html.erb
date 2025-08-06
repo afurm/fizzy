@@ -2,7 +2,7 @@
 <html lang="en">
   <%= render "layouts/shared/head" %>
 
-  <body data-controller="lightbox local-time timezone-cookie" data-action="turbo:morph@window->local-time#refreshAll">
+  <body data-controller="local-time timezone-cookie" data-action="turbo:morph@window->local-time#refreshAll">
     <header id="header">
       <a href="#main" class="skip-navigation btn" data-turbo="false">Skip to main content</a>
       <%= yield :header %>
