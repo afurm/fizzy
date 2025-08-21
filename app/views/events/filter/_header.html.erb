@@ -1,37 +1,8 @@
 <div class="fizzy-menu__hotkeys" role="list">
-  <%= link_to root_path, class: "popup__group btn borderless", id: "filter-hotkey-home", data: { filter_target: "item", navigable_list_target: "item", controller: "hotkey", action: "keydown.1@document->hotkey#click keydown.shift+1@document->hotkey#click" } do %>
-    <%= icon_tag "home" %>
-    <span>Home</span>
-    <kbd>1</kbd>
-  <% end %>
-
-  <%= link_to cards_path(assignee_ids: [Current.user.id]), class: "popup__group btn borderless", id: "filter-hotkey-assigned-to-me", data: { filter_target: "item", navigable_list_target: "item", controller: "hotkey", action: "keydown.2@document->hotkey#click keydown.shift+2@document->hotkey#click" } do %>
-    <%= icon_tag "clipboard" %>
-    <span>Assigned to me</span>
-    <kbd>2</kbd>
-  <% end %>
-
-  <%= link_to cards_path(creator_ids: [Current.user.id]), class: "popup__group btn borderless", id: "filter-hotkey-added-by-me", data: { filter_target: "item", navigable_list_target: "item", controller: "hotkey", action: "keydown.3@document->hotkey#click keydown.shift+3@document->hotkey#click" } do %>
-    <%= icon_tag "person-add" %>
-    <span>Added by me</span>
-    <kbd>3</kbd>
-  <% end %>
-
-  <%= link_to new_collection_path, class: "popup__group btn borderless", id: "filter-hotkey-new-collection", data: { filter_target: "item", navigable_list_target: "item", controller: "hotkey", action: "keydown.4@document->hotkey#click keydown.shift+4@document->hotkey#click" } do %>
-    <%= icon_tag "collection-add" %>
-    <span>New Collection</span>
-    <kbd>4</kbd>
-  <% end %>
-
-  <%= link_to notifications_path, class: "popup__group btn borderless", id: "filter-hotkey-notifications", data: { filter_target: "item", navigable_list_target: "item", controller: "hotkey", action: "keydown.5@document->hotkey#click keydown.shift+5@document->hotkey#click" } do %>
-    <%= icon_tag "bell" %>
-    <span>Notifications</span>
-    <kbd>5</kbd>
-  <% end %>
-
-  <%= link_to account_settings_path, class: "popup__group btn borderless", id: "filter-hotkey-account-settings", data: { filter_target: "item", navigable_list_target: "item", controller: "hotkey", action: "keydown.6@document->hotkey#click keydown.shift+6@document->hotkey#click" } do %>
-    <%= icon_tag "settings" %>
-    <span>Account <span class="visually-hidden">Settings</span></span>
-    <kbd>6</kbd>
-  <% end %>
+  <%= hotkey_link "Home", root_path, 1, "home" %>
+  <%= hotkey_link "Assigned to me", cards_path(assignee_ids: [Current.user.id]), 2, "clipboard" %>
+  <%= hotkey_link "Added by me", cards_path(creator_ids: [Current.user.id]), 3, "person-add" %>
+  <%= hotkey_link "New Collection", new_collection_path, 4, "collection-add" %>
+  <%= hotkey_link "Notifications", notifications_path, 5, "bell" %>
+  <%= hotkey_link "Account #{tag.span("Settings", class: "visually-hidden")}", account_settings_path, 6, "settings" %>
 </div>

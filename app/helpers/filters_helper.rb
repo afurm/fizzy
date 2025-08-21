@@ -44,4 +44,12 @@ module FiltersHelper
       filter.stages.any? || filter.terms.any? || filter.card_ids&.any? ||
       filter.assignment_status.unassigned? || !filter.indexed_by.latest?
   end
+
+  def hotkey_link(title, path, key, icon)
+    link_to path, class: "popup__group btn borderless", id: "filter-hotkey-#{key}", role: "listitem", data: { filter_target: "item", navigable_list_target: "item", controller: "hotkey", action: "keydown.#{key}@document->hotkey#click keydown.shift+#{key}@document->hotkey#click"} do
+      concat icon_tag(icon)
+      concat tag.span(title.html_safe)
+      concat tag.kbd(key)
+    end
+  end
 end
