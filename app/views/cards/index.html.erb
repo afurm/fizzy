@@ -9,7 +9,7 @@
 <% end %>
 
 <% content_for :header do %>
-  <%= render "cards/index/header", filter: @filter %>
+  <%= render "filters/menu", user_filtering: @user_filtering %>
 <% end %>
 
 <header class="header" style="--header-actions-width: 7rem;">
@@ -21,17 +21,12 @@
 
   <div class="header__actions header__actions--end">
     <% if collection = @filter.single_collection %>
-      <%= access_involvement_advance_button collection, Current.user %>
-
-      <%= link_to edit_collection_path(collection), class: "btn tooltip" do %>
-        <%= icon_tag "settings" %>
-        <span class="for-screen-reader">Settings for <%= collection.name %></span>
-      <% end %>
+      <%= render "cards/collection_settings", collection: collection %>
     <% end %>
   </div>
 </header>
 
-<%= render "filters/settings", filter: @filter %>
+<%= render "filters/settings", user_filtering: @user_filtering %>
 
 <%= tag.div data: {
       controller: "drag-and-drop",

@@ -10,10 +10,4 @@ module FiltersHelper
     name = params[key].is_a?(Array) ? "#{key}[]" : key
     hidden_field_tag name, value, id: nil
   end
-
-  def any_filters?(filter)
-    filter.tags.any? || filter.assignees.any? || filter.creators.any? || filter.closers.any? ||
-      filter.stages.any? || filter.terms.any? || filter.card_ids&.any? ||
-      filter.assignment_status.unassigned? || !filter.indexed_by.latest?
-  end
 end

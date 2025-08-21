@@ -1,0 +1,63 @@
+<% filter = user_filtering.filter %>
+
+<% if user_filtering.show_tags? %>
+  <div class="quick-filter position-relative" data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+    <button class="btn input input--select flex-inline txt-x-small" data-action="click->dialog#open:stop">
+      <span class="overflow-ellipsis">
+        <% if filter.tags.any? %>
+          <%= filter.tags.map(&:hashtag).to_sentence(two_words_connector: " or ", last_word_connector: ", or ") %>
+        <% else %>
+          Tagged…
+        <% end %>
+      </span>
+    </button>
+
+    <%= tag.dialog class: "margin-block-start-half popup panel flex-column align-start gap-half fill-white shadow txt-small", data: {
+				action: "turbo:before-cache@document->dialog#close keydown->navigable-list#navigate filter:changed->navigable-list#reset toggle->filter#filter",
+        aria: { label: "Tagged…", aria_description: "Tagged…" },
+				controller: "filter navigable-list",
+				dialog_target: "dialog",
+				navigable_list_focus_on_selection_value: false,
+				navigable_list_actionable_items_value: true } do %>
+      <strong class="popup__title txt-nowrap">Tagged…</strong>
+
+      <% if user_filtering.tags.many? %>
+        <%= text_field_tag :search, nil, placeholder: "Filter…", class: "input input--transparent txt-small", autofocus: true,
+              type: "search", autocorrect: "off", autocomplete: "off", data: { "1p-ignore": "true", filter_target: "input", action: "input->filter#filter" } %>
+      <% end %>
+
+      <ul class="popup__list" data-filter-target="list">
+        <% user_filtering.tags.each do |tag| %>
+          <li class="popup__group" data-filter-target="item" data-navigable-list-target="item">
+            <%= form_with url: cards_path, method: :get, class: "full-width", data: { controller: "form" } do |form| %>
+              <% filter.as_params.except(:tag_ids).each do |key, value| %>
+                <%= filter_hidden_field_tag key, value %>
+              <% end %>
+
+              <% filter.tags.each do |existing_tag| %>
+                <% unless existing_tag == tag %>
+                  <%= hidden_field_tag "tag_ids[]", existing_tag.id %>
+                <% end %>
+              <% end %>
+
+              <% unless filter.tags.include?(tag) %>
+                <%= hidden_field_tag "tag_ids[]", tag.id %>
+              <% end %>
+
+              <% if user_filtering.expanded? %>
+                <%= hidden_field_tag :expand_all, user_filtering.expanded? %>
+              <% end %>
+
+              <%= form.button type: "submit", class: "popup__item btn" do %>
+                <span class="overflow-ellipsis flex-item-grow"><%= tag.hashtag %></span>
+                <% if filter.tags.include?(tag) %>
+                  <%= icon_tag "check", class: "checked flex-item-justify-end" %>
+                <% end %>
+              <% end %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+<% end %>

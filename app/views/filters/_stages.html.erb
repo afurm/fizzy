@@ -1,4 +1,4 @@
-<% if filter.stages.any? || @expand_all %>
+<% if filter.stages.any? || user_filtering.expanded? %>
   <div class="quick-filter position-relative" data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
     <button class="btn input input--select flex-inline txt-x-small" data-action="click->dialog#open:stop">
       <span class="overflow-ellipsis">
@@ -20,8 +20,8 @@
           <%= filter_hidden_field_tag key, value %>
         <% end %>
 
-        <% if @expand_all %>
-          <%= hidden_field_tag :expand_all, @expand_all %>
+        <% if user_filtering.expanded? %>
+          <%= hidden_field_tag :expand_all, user_filtering.expanded? %>
         <% end %>
 
         <% filter.stages.first.workflow.stages.each do |stage| %>

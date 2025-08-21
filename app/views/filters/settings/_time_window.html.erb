@@ -1,4 +1,5 @@
-<% if filter.public_send("#{name}_window").present? %>
+<% filter = user_filtering.filter %>
+<% if user_filtering.show_time_window?(name) %>
   <div class="quick-filter position-relative" data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
     <button class="btn input input--select flex-inline txt-x-small" data-action="click->dialog#open:stop">
       <span class="overflow-ellipsis">

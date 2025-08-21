@@ -10,7 +10,6 @@ module FilterScoped
     DEFAULT_PARAMS = { indexed_by: "latest" }
 
     def set_filter
-      @expand_all = params[:expand_all]
       if params[:filter_id].present?
         @filter = Current.user.filters.find(params[:filter_id])
       else
@@ -19,6 +18,6 @@ module FilterScoped
     end
 
     def set_user_filtering
-      @user_filtering = User::Filtering.new(Current.user, @filter)
+      @user_filtering = User::Filtering.new(Current.user, @filter, expanded: params[:expand_all])
     end
 end

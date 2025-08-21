@@ -1,0 +1,3 @@
+<% user_filtering.filter.terms.each do |term| %>
+  <%= filter_chip_tag %Q("#{term}"), filter.as_params_without(:terms, term) %>
+<% end %>

@@ -2,11 +2,7 @@
 <%= turbo_stream_from :activity_summaries %>
 
 <% content_for :header do %>
-  <nav class="header">
-    <header class="center">
-      <%= render "filters/menu", user_filtering: @user_filtering %>
-    </header>
-  </nav>
+  <%= render "filters/menu", user_filtering: @user_filtering %>
 <% end %>
 
 <header class="events-header header margin-block-end">

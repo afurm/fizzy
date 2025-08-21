@@ -1,4 +1,6 @@
-<% if filter.creators.any? || @expand_all %>
+<% filter = user_filtering.filter %>
+
+<% if user_filtering.show_creators? %>
   <div class="quick-filter position-relative" data-controller="dialog"
         data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
     <button class="btn input input--select flex-inline txt-x-small" data-action="click->dialog#open:stop">
@@ -20,13 +22,13 @@
 				navigable_list_actionable_items_value: true } do %>
       <strong class="popup__title txt-nowrap">Added by…</strong>
 
-      <% if User.active.many? %>
+      <% if user_filtering.users.many? %>
         <%= text_field_tag :search, nil, placeholder: "Filter…", class: "input input--transparent txt-small", autofocus: true,
               type: "search", autocorrect: "off", autocomplete: "off", data: { "1p-ignore": "true", filter_target: "input", action: "input->filter#filter" } %>
       <% end %>
 
       <ul class="popup__list" data-filter-target="list">
-        <% User.active.order(:name).each do |user| %>
+        <% user_filtering.users.each do |user| %>
           <li class="popup__group" data-filter-target="item" data-navigable-list-target="item">
             <%= form_with url: cards_path, method: :get, class: "full-width", data: { controller: "form" } do |form| %>
               <% filter.as_params.except(:creator_ids).each do |key, value| %>
@@ -43,8 +45,8 @@
                 <%= hidden_field_tag "creator_ids[]", user.id %>
               <% end %>
 
-              <% if @expand_all %>
-                <%= hidden_field_tag :expand_all, @expand_all %>
+              <% if user_filtering.expanded? %>
+                <%= hidden_field_tag :expand_all, user_filtering.expanded? %>
               <% end %>
 
               <%= form.button type: "submit", class: "popup__item btn" do %>
