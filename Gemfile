@@ -42,6 +42,7 @@ gem "rails_structured_logging", bc: "rails-structured-logging"
 gem "yabeda"
 gem "yabeda-rails"
 gem "yabeda-puma-plugin"
+gem "webrick" # required for yabeda-prometheus metrics server
 gem "yabeda-prometheus-mmap"
 gem "prometheus-client-mmap", "~> 1.1"
 
