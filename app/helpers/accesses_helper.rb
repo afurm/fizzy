@@ -17,12 +17,12 @@ module AccessesHelper
       cached: ->(user) { [ user, selected ] }
   end
 
-  def access_involvement_advance_button(collection, user, show_watchers: true)
+  def access_involvement_advance_button(collection, user, show_watchers: true, icon_only: false)
     access = collection.access_for(user)
 
     turbo_frame_tag dom_id(collection, :involvement_button) do
       concat collection_watchers_list(collection) if show_watchers
-      concat involvement_button(collection, access, show_watchers)
+      concat involvement_button(collection, access, show_watchers, icon_only)
     end
   end
 
@@ -43,7 +43,7 @@ module AccessesHelper
     end
   end
 
-  def involvement_button(collection, access, show_watchers)
+  def involvement_button(collection, access, show_watchers, icon_only)
     involvement_label_id = dom_id(collection, :involvement_label)
 
     button_to(
@@ -57,7 +57,7 @@ module AccessesHelper
         icon_tag("notification-bell-#{access.involvement.dasherize}"),
         tag.span(
           involvement_access_label(collection, access.involvement),
-          class: "txt-nowrap txt-uppercase",
+          class: class_names("txt-nowrap txt-uppercase", "for-screen-reader": icon_only),
           id: involvement_label_id
         )
       ])
