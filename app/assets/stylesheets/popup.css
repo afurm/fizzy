@@ -5,7 +5,7 @@
     --panel-padding: var(--block-space);
     --panel-size: auto;
     --popup-icon-size: 24px;
-    --popup-item-padding-inline: var(--inline-space-half);
+    --popup-item-padding-inline: 0.5rem;
 
     inset: 0 auto auto 50%;
     max-block-size: 80vh;
@@ -122,14 +122,6 @@
         }
       }
     }
-
-    &:has(> :first-child:not(.popup__btn)) {
-      padding-inline-start: var(--popup-item-padding-inline);
-    }
-
-    &:has(> :last-child:not(.popup__btn)) {
-      padding-inline-end: var(--popup-item-padding-inline);
-    }
   }
 
   /* The actionable thing with padding within popup__item */
@@ -165,6 +157,7 @@
     --icon-size: 1em;
 
     inline-size: var(--popup-icon-size);
+    margin-inline-start: var(--popup-item-padding-inline);
   }
 
   .popup__radio {
@@ -172,6 +165,7 @@
 
     block-size: var(--popup-icon-size);
     inline-size: var(--popup-icon-size);
+    margin-inline-start: var(--popup-item-padding-inline);
     flex-shrink: 0;
 
     &:hover {
