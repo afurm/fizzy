@@ -177,7 +177,7 @@
 
       /* Progress */
       &:after {
-        background: var(--column-color);
+        background: var(--card-color);
         block-size: calc(var(--column-width-collapsed) + var(--card-count) * var(--progress-increment));
         border-radius: 99rem;
         content: "";
@@ -541,6 +541,12 @@
 
     .card {
       --card-color: var(--color-card-complete) !important;
+    }
+
+    &.cards.is-collapsed {
+      .cards__expander:after {
+        background: var(--column-color);
+      }
     }
 
     .bubble {
