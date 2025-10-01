@@ -73,7 +73,7 @@
       z-index: 3;
     }
 
-    &:not(.cards--considering) {
+    &:not(.cards--considering, .is-collapsed) {
       overflow: clip;
     }
 
