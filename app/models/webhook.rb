@@ -40,11 +40,11 @@ class Webhook < ApplicationRecord
   validate :validate_url
 
   def activate
-    update_columns active: true
+    update! active: true unless active?
   end
 
   def deactivate
-    update_columns active: false
+    update! active: false
   end
 
   def renderer
