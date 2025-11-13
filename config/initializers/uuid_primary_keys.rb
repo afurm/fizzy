@@ -1,13 +1,11 @@
 # Automatically use UUID type for all binary(16) columns
 ActiveSupport.on_load(:active_record) do
-  # Add UUID to MySQL's native database types
-  module MysqlUuidNativeType
-    def native_database_types
-      super.merge(uuid: { name: "binary", limit: 16 })
-    end
-  end
-
   module MysqlUuidAdapter
+    # Add UUID to MySQL's native database types
+    def native_database_types
+      @native_database_types_with_uuid ||= super.merge(uuid: { name: "binary", limit: 16 })
+    end
+
     # Override type_to_sql to use binary instead of varbinary for UUID columns
     def type_to_sql(type, limit: nil, **options)
       if type.to_s == "binary" && limit == 16
@@ -27,7 +25,6 @@ ActiveSupport.on_load(:active_record) do
     end
   end
 
-  ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter.prepend(MysqlUuidNativeType)
   ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter.prepend(MysqlUuidAdapter)
 
   module SchemaDumperBinaryLimit
