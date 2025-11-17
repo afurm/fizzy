@@ -48,6 +48,10 @@
         margin: 0;
       }
     }
+
+    @supports (hanging-punctuation: first) and (font: -apple-system-body) and (-webkit-appearance: none) {
+      font-size: max(16px, 1em) !important;
+    }
   }
 
   .input--file {
