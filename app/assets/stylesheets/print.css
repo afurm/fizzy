@@ -125,13 +125,11 @@
   .card--new,
   .cards__decoration,
   .card-columns:before,
-  .cards--considering:before,
-  .cards--closed:before {
+  .cards--considering:before {
     display: none;
   }
 
-  .card-columns,
-  .cards--closed {
+  .card-columns {
     border-block-start: var(--border-light);
     margin-block-end: 1ch;
     min-block-size: unset;
@@ -153,21 +151,6 @@
 
     .card__body {
       padding-block-start: calc(var(--card-padding-block) / 2);
-    }
-  }
-
-  .cards--closed {
-    .card:nth-of-type(7) {
-      margin-block: 0;
-    }
-
-    .card:nth-of-type(n+7) {
-      border-inline: none;
-      max-inline-size: none;
-    }
-
-    .card:nth-of-type(n+8) {
-      margin-block-start: calc(-1 * var(--cards-gap) - 1px);
     }
   }
 
