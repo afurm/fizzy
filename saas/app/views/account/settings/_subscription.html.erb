@@ -4,4 +4,12 @@
   <p class="txt-medium margin-none-block-start"><%= subscription_period_end_action(subscription) %> <strong><%= subscription.current_period_end.to_date.to_fs(:long) %></strong></p>
 <% end %>
 
-<%= link_to "Manage Billing", account_billing_portal_path, class: "btn", data: { turbo_prefetch: false } %>
+<div class="flex gap-half justify-center">
+  <%= link_to "Manage Billing", account_billing_portal_path, class: "btn", data: { turbo_prefetch: false } %>
+
+  <% if subscription.plan == Plan.paid %>
+    <%= button_to "Upgrade to Extra Storage", account_subscription_upgrade_path, class: "btn", form: { data: { turbo: false } } %>
+  <% elsif subscription.plan == Plan.paid_with_extra_storage %>
+    <%= button_to "Downgrade to Regular", account_subscription_downgrade_path, class: "btn", form: { data: { turbo: false } } %>
+  <% end %>
+</div>

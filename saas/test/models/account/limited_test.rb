@@ -76,31 +76,31 @@ class Account::LimitedTest < ActiveSupport::TestCase
 
   test "detect nearing storage limit" do
     # Paid plans have large storage limits
-    accounts(:"37s").update_column(:bytes_used, 4.gigabytes)
+    accounts(:"37s").stubs(:bytes_used).returns(4.gigabytes)
     assert_not accounts(:"37s").nearing_plan_storage_limit?
 
     # Free plan not near limit
-    accounts(:initech).update_column(:bytes_used, 400.megabytes)
+    accounts(:initech).stubs(:bytes_used).returns(400.megabytes)
     assert_not accounts(:initech).nearing_plan_storage_limit?
 
     # Free plan near limit
-    accounts(:initech).update_column(:bytes_used, 600.megabytes)
+    accounts(:initech).stubs(:bytes_used).returns(600.megabytes)
     assert accounts(:initech).nearing_plan_storage_limit?
   end
 
   test "detect exceeding storage limit" do
     # Free plan under limit
-    accounts(:initech).update_column(:bytes_used, 900.megabytes)
+    accounts(:initech).stubs(:bytes_used).returns(900.megabytes)
     assert_not accounts(:initech).exceeding_storage_limit?
 
     # Free plan over limit
-    accounts(:initech).update_column(:bytes_used, 1.1.gigabytes)
+    accounts(:initech).stubs(:bytes_used).returns(1.1.gigabytes)
     assert accounts(:initech).exceeding_storage_limit?
   end
 
   test "override bytes_used limits" do
     account = accounts(:initech)
-    account.update_column(:bytes_used, 1.1.gigabytes)
+    account.stubs(:bytes_used).returns(1.1.gigabytes)
 
     assert account.exceeding_storage_limit?
     assert_equal 1.1.gigabytes, account.billed_bytes_used
